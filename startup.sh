@@ -43,7 +43,12 @@ echo "Deploying to kubernetes"
 cat manifests/*.yaml | envsubst | kubectl apply -f -
 
 echo "Waiting for deployments to be ready"
-kubectl wait --for=condition=available --timeout=600s deployment/todolist
-kubectl wait --for=condition=available --timeout=600s deployment/thumbnailer
-kubectl wait --for=condition=available --timeout=600s service/todolist
-
+kubectl wait --for=condition=available --timeout=600s deployment/todolist -n todolist
+kubectl wait --for=condition=available --timeout=600s deployment/thumbnailer -n todolist
+ip=""
+while [ -z $ip ]; do
+  echo "Waiting for external IP"
+  ip=$(kubectl get svc todolist -n todolist --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")
+  [ -z "$ip" ] && sleep 10
+done
+echo "Application appears to up and running, open http://${ip}/todolist in your browser."
