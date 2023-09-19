@@ -44,16 +44,33 @@ if [[ $EXPLOIT_TYPE == "RemoteShell" ]]; then
 fi
 
 
-# if "build" passed as argument, or BUILD_IMAGES_YN is "y" (case insensitive) do the build
 if [[ $1 == "build" ]] || [[ $BUILD_IMAGES_YN =~ ^[Yy]$ ]]; then
   echo "Building and pushing docker images"
 
   #if depot is in PATH, use it, otherwise use docker
   if command -v depot >/dev/null 2>&1; then
     export IMAGE_BUILDER="depot build "
-    export IMAGE_FLAGS=" --project 5024s98s0j --push"
+    export IMAGE_FLAGS=" --project 5024s98s0j --push --platform=linux/amd64,linux/arm64"
   elif command -v docker >/dev/null 2>&1; then
     export IMAGE_BUILDER="docker build "
+    echo "Which platform would you like to build for?"
+    select IMAGE_PLATORM in "linux/amd64" "linux/arm64" "both (requires buildx)"; do
+      case $IMAGE_PLATORM in
+        "both (requires buildx)")
+          echo "Building for both platforms"
+          export IMAGE_BUILDER="docker buildx build "
+          export IMAGE_FLAGS=" --push --platform=linux/amd64,linux/arm64"
+          break
+          ;;
+        *)
+          echo "Building for $IMAGE_PLATORM"
+          export IMAGE_FLAGS=" --platform=${IMAGE_PLATORM}"
+          break
+          ;;
+      esac
+
+      break
+    done
   else
     echo "ERROR: Neither docker nor depot client found, exiting"
     exit 1
@@ -62,9 +79,9 @@ if [[ $1 == "build" ]] || [[ $BUILD_IMAGES_YN =~ ^[Yy]$ ]]; then
   echo "  ${IMAGE_BUILDER}client found, will use it to build and push images"
   echo
 
-  $IMAGE_BUILDER -t $REPO/thumbnailer:latest --platform=linux/amd64,linux/arm64 thumbnailer $IMAGE_FLAGS
-  $IMAGE_BUILDER -t $REPO/todolist:latest --platform=linux/amd64,linux/arm64  todolist $IMAGE_FLAGS
-  $IMAGE_BUILDER -t $REPO/log4shell-server:latest --platform=linux/amd64,linux/arm64 todolist/exploits/log4shell-server $IMAGE_FLAGS
+  $IMAGE_BUILDER -t $REPO/thumbnailer:latest thumbnailer $IMAGE_FLAGS
+  $IMAGE_BUILDER -t $REPO/todolist:latest todolist $IMAGE_FLAGS
+  $IMAGE_BUILDER -t $REPO/log4shell-server:latest todolist/exploits/log4shell-server $IMAGE_FLAGS
 
   if [[ $IMAGE_BUILDER == *"docker"* ]]; then
     docker push $REPO/thumbnailer:latest
@@ -87,11 +104,15 @@ echo "Waiting for deployments to be ready"
 kubectl wait --for=condition=available --timeout=600s deployment/todolist -n todolist
 kubectl wait --for=condition=available --timeout=600s deployment/thumbnailer -n todolist
 ip=""
-while [ -z $ip ]; do
+while [[ -z $ip && -z "$lb_hostname" ]]; do
   echo "Waiting for external IP"
   ip=$(kubectl get svc todolist -n todolist --template="{{range .status.loadBalancer.ingress}}{{.ip}}{{end}}")
-  [ -z "$ip" ] && sleep 10
+  lb_hostname=$(kubectl get svc todolist -n todolist -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+  [[ -z "$ip" && -z "$lb_hostname" ]] && sleep 10
 done
+if [[ "$lb_hostname" != "" ]]; then
+  ip=$lb_hostname
+fi
 echo "Application appears to up and running, open http://${ip}/todolist in your browser."
 echo
 if [[ $EXPLOIT_TYPE == "RemoteShell" ]]; then
