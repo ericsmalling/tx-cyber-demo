@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: block-log4shell
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - istio-system/ingressgateway
+  http:
+  - match:
+    - headers:
+        user-agent:
+          regex: ".*\$\{jndi:.*"
+    directResponse:
+      status: 503
+  - route:
+    - destination:
+        host: your-service.default.svc.cluster.local
