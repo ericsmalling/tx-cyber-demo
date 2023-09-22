@@ -7,12 +7,9 @@ spec:
     istio: ingressgateway # use istio default ingress gateway
   servers:
   - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    tls:
-      mode: SIMPLE
-      credentialName: todolist-cred # must be the same as secret
+      number: 80
+      name: http
+      protocol: HTTP
     hosts:
     - todolist.smalls.xyz
 
