@@ -11,9 +11,9 @@ spec:
   - match:
     - headers:
         user-agent:
-          regex: ".*\$\{jndi:.*"
+          regex: ".*jndi:.*"
       uri:
-        regex: ".*\$\{jndi:.*"
+        regex: ".*jndi:.*"
     directResponse:
       status: 503
   - route:
