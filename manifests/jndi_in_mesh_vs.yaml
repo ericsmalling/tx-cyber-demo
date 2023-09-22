@@ -14,4 +14,4 @@ spec:
       status: 503
   - route:
     - destination:
-        host: your-service.default.svc.cluster.local
+        host: todolist.default.svc.cluster.local
