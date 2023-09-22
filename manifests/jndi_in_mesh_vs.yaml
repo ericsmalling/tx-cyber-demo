@@ -10,6 +10,8 @@ spec:
     - headers:
         user-agent:
           regex: ".*\$\{jndi:.*"
+      uri:
+        regex: ".*\$\{jndi:.*"
     directResponse:
       status: 503
   - route:
