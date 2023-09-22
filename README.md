@@ -37,8 +37,6 @@ Assuming you have cloned this repo to a machine with the following prerequisites
 * One of the following container image building tools, pre-configured to deploy to your image registry
   * [Docker](https://docker.com) runtime
   * [Depot.dev](https://depot.dev) client
-  * [Buildah](https://buildah.io/) tool
-    * NOTE: You must be running buildah on an amd64 (Intel) machine to build the images   
 
 ### Build & Deploy
 From the top level of this repo, run `./startup.sh build`
