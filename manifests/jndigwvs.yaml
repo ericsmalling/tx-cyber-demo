@@ -8,14 +8,6 @@ spec:
   gateways:
   - todolist
   http:
-  - match:
-    - headers:
-        user-agent:
-          regex: ".*jndi:.*"
-      uri:
-        regex: ".*jndi:.*"
-    directResponse:
-      status: 503
   - route:
     - destination:
         host: todolist.default.svc.cluster.local
