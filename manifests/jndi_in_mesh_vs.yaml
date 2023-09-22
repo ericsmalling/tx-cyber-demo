@@ -16,4 +16,6 @@ spec:
       status: 503
   - route:
     - destination:
+        port:
+          number: 80
         host: todolist.default.svc.cluster.local
