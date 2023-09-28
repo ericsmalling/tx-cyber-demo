@@ -1,0 +1,18 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: todolist
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - todolist.smalls.xyz
+    port:
+      name: https
+      number: 443
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: todolist-cred
+

@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: todolist
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - hosts:
+    - todolist.smalls.xyz
+    port:
+      name: http
+      number: 80
+      protocol: HTTP
