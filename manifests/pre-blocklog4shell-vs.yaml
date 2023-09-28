@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: block-log4shell
+spec:
+  gateways:
+  - todolist
+  hosts:
+  - todolist.smalls.xyz
+  http:
+  - route:
+    - destination:
+        host: todolist.todolist.svc.cluster.local
+        port:
+          number: 80
