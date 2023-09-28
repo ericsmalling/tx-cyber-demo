@@ -83,7 +83,7 @@ if [[ $1 == "build" ]] || [[ $BUILD_IMAGES_YN =~ ^[Yy]$ ]]; then
   $IMAGE_BUILDER -t $REPO/todolist:latest todolist $IMAGE_FLAGS
   $IMAGE_BUILDER -t $REPO/log4shell-server:latest todolist/exploits/log4shell-server $IMAGE_FLAGS
 
-  if [[ $IMAGE_BUILDER == *"docker"* ]]; then
+  if [[ $IMAGE_BUILDER == "docker build " ]]; then
     docker push $REPO/thumbnailer:latest
     docker push $REPO/todolist:latest
     docker push $REPO/log4shell-server:latest
