@@ -6,10 +6,10 @@ spec:
   gateways:
   - todolist
   hosts:
-  - '*'
+  - todolist.smalls.xyz
   http:
   - route:
     - destination:
-        host: todolist.default.svc.cluster.local
+        host: todolist.todolist.svc.cluster.local
         port:
           number: 80
